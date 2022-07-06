@@ -46,7 +46,7 @@ def make_predict():
     X[0,] = image
     
     ### Loading the model
-    trained_unet_scratch = tf.keras.models.load_model("model/unet_scratch_40/")
+    trained_unet_scratch = tf.keras.models.load_model("./model/unet_scratch_40/")
     
     ### Prediction
     y_pred = trained_unet_scratch.predict(X)
