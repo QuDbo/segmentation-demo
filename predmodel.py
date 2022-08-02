@@ -55,6 +55,34 @@ def make_predict(model):
                             data_format="channels_last")
     ###
     
+    
+def make_predict_example(model,id_image):
+    '''
+    Load the image store as id_image and convert to an array
+    Load the model and make a prediction
+    Convert the masks array into a image and store it
+    '''
+    
+    ### Loading the image
+    path_img = id_image
+    dimension = (256, 256)
+    X = np.empty((1, *dimension, 3), dtype="uint8")
+    image = imgtf.load_img(path_img,
+    color_mode="rgb",
+    target_size=dimension, # Depends of the model trained
+    interpolation="nearest",
+    )
+    X[0,] = image
+    
+    ### Prediction
+    y_pred = model.predict(X)
+    masks = y_pred[0,]
+    image_masks = convert_mask_to_color(masks)
+    image_to_save = imgtf.array_to_img(image_masks)
+    path_to_save = id_image.replace('leftImg8bit','retrieved').replace('examples','results')
+    tf.keras.utils.save_img(path_to_save, image_to_save,
+                            data_format="channels_last")
+    ###
 
 def compare_random_image_masks(X,y,y_pred):
     '''

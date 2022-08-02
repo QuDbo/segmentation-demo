@@ -7,6 +7,7 @@ from werkzeug.utils import secure_filename
 from predmodel import *
 import tensorflow as tf
 import tensorflow.keras.backend as K
+from os.path import exists
 
 def iou_coef(y_true, y_pred, smooth=1e-1):
     
@@ -33,6 +34,12 @@ def allowed_file(filename):
 
 @app.route('/')
 def upload_form():
+    local_path = "model/unet_vgg16_v3_256_2Aug/variables/"
+    model_url = "https://github.com/QuDbo/segmentation-demo/releases/download/demo/variables.data-00000-of-00001?raw=true"
+    
+    file_exists = exists(local_path+"variables.data-00000-of-00001")
+    if not(file_exists):
+        wget.download(model_url, local_path)
     return render_template('upload.html')
 
 @app.route('/', methods=['POST'])
@@ -58,18 +65,7 @@ def upload_file():
             
 @app.route('/verif', methods=['POST'])
 def verif():
-    # flash(f'répertoire courant : {os.getcwd()}')
-    # filepath = os.path.join(os.getcwd(),'static\image_submit.png')
-    # listdir = os.listdir(os.path.join(os.getcwd(),'static'))
-    # flash(f'dossier racine : {str(listdir)}')
-    # isFile = os.path.isfile(filepath)
-    # flash(f'Fichier trouvé : {isFile}')
-    ##
     ### Loading the model
-    model_url = "https://github.com/QuDbo/segmentation-demo/releases/download/demo/variables.data-00000-of-00001?raw=true"
-    local_path = "model/unet_vgg16_v3_256_2Aug/variables/"
-    wget.download(model_url, local_path)
-    
     model = tf.keras.models.load_model("./model/unet_vgg16_v3_256_2Aug/",
                                                       custom_objects={"iou_coef":iou_coef}
                                                      )
@@ -80,6 +76,37 @@ def verif():
     ##
     inference_time = round(time.time() - t0,2)
     return render_template('verif.html', inference_time=inference_time)
+
+@app.route('/examples', methods=['POST'])
+def examples():
+    if request.method == 'POST':
+        name_list = ['frankfurt_000000_001016','lindau_000000_000019','munster_000046_000019']
+        return render_template("examples.html",
+                                server_list=name_list)
+
+@app.route('/results', methods=['POST'])
+def results():
+    if request.method == 'POST':
+        option = request.form.get('option', '')
+        ### Loading the model
+        model = tf.keras.models.load_model("./model/unet_vgg16_v3_256_2Aug/",
+                                                          custom_objects={"iou_coef":iou_coef}
+                                                         )
+        ##
+        id_originale = "static/examples/"+option+"_leftImg8bit.png"
+        id_masks = "static/examples/"+option+"_mask_colors.png"
+        id_retrieved = "static/results/"+option+"_retrieved.png"
+        ##
+        t0 = time.time()
+        ##
+        make_predict_example(model,id_originale)
+        ##
+        inference_time = round(time.time() - t0,2)
+        return render_template('results.html',
+                                id_originale=id_originale,
+                                id_masks=id_masks,
+                                id_retrieved=id_retrieved,
+                                inference_time=inference_time)
         
 if __name__ == "__main__":
     app.run()
