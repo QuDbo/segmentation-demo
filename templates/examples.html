@@ -1,0 +1,28 @@
+<!doctype html>
+<title>Python Flask File Upload Example</title>
+<h2>Examples of files</h2>
+<p>
+	{% with messages = get_flashed_messages() %}
+	  {% if messages %}
+		<ul class=flashes>
+		{% for message in messages %}
+		  <li>{{ message }}</li>
+		{% endfor %}
+		</ul>
+	  {% endif %}
+	{% endwith %}
+</p>
+<p>
+    Choose between the following examples :
+</p>
+<form action="/results" method="POST">
+    <td>
+    <label>Select :</label>
+    <select name="option" width="300px">
+        {% for x in server_list %}
+        <option value="{{ x }}"{% if loop.first %} SELECTED{% endif %}>{{ x }}</option>
+        {% endfor %}
+    </select>
+    <input type="submit" value="Go"><br>
+    </td>
+</form>

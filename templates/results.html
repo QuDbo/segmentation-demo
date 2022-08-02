@@ -13,25 +13,35 @@
 	{% endwith %}
 </p>
 <p>
-    The analysis is made based on this image :
+    The analysis is made based on this image : 
 </p>
 <p>
     <figure>
-    <img src="static/image_submit.png"
+    <img src={{id_originale}}
          width=512
          height=256>
     <figcaption>The image loaded</figcaption>
+    </figure>
+</p>
+The true masks that should be obtained are : 
+</p>
+<p>
+    <figure>
+    <img src={{id_masks}}
+         width=512
+         height=256>
+    <figcaption>The masks computed by the model</figcaption>
     </figure>
 </p>
 <p>
 The inference time for this image is : {{inference_time}}
 </p>
 <p>
-The masks obtained are :
+The masks obtained are : 
 </p>
 <p>
     <figure>
-    <img src="static/masks_retrieved.png"
+    <img src={{id_retrieved}}
          width=512
          height=256>
     <figcaption>The masks computed by the model</figcaption>
