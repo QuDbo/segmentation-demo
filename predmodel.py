@@ -1,6 +1,7 @@
 import tensorflow as tf
 import tensorflow.keras.preprocessing.image as imgtf
 import numpy as np
+from postModel_v7 import *
 
 def convert_mask_to_color(masks):
     '''
@@ -46,7 +47,9 @@ def make_predict():
     X[0,] = image
     
     ### Loading the model
-    trained_unet_scratch = tf.keras.models.load_model("./model/unet_scratch_40/")
+    trained_unet_scratch = tf.keras.models.load_model("model/unet_vgg16_v3_256_2Aug/",
+                                                      custom_objects={"iou_coef":iou_coef}
+                                                     )
     
     ### Prediction
     y_pred = trained_unet_scratch.predict(X)
