@@ -4,3 +4,4 @@ tensorflow-cpu==2.9.1
 Pillow
 gunicorn
 opencv-python
+wget
