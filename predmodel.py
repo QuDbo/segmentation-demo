@@ -28,7 +28,7 @@ def convert_mask_to_color(masks):
     color_masks = np.stack((color_masks_r,color_masks_g,color_masks_b),axis=-1)
     return color_masks
 
-def make_predict():
+def make_predict(model):
     '''
     Load the image store as static/image_submit.png and convert to an array
     Load the model and make a prediction
@@ -46,13 +46,8 @@ def make_predict():
     )
     X[0,] = image
     
-    ### Loading the model
-    trained_unet_scratch = tf.keras.models.load_model("model/unet_vgg16_v3_256_2Aug/",
-                                                      custom_objects={"iou_coef":iou_coef}
-                                                     )
-    
     ### Prediction
-    y_pred = trained_unet_scratch.predict(X)
+    y_pred = model.predict(X)
     masks = y_pred[0,]
     image_masks = convert_mask_to_color(masks)
     image_to_save = imgtf.array_to_img(image_masks)

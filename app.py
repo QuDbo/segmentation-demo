@@ -4,6 +4,7 @@ import urllib.request
 from flask import Flask, flash, request, redirect, render_template
 from werkzeug.utils import secure_filename
 from predmodel import *
+from postModel_v7 import *
 
 app = Flask(__name__)
 app.secret_key= "secret key"
@@ -47,9 +48,14 @@ def verif():
     # isFile = os.path.isfile(filepath)
     # flash(f'Fichier trouvé : {isFile}')
     ##
+    ### Loading the model
+    model = tf.keras.models.load_model("model/unet_vgg16_v3_256_2Aug/",
+                                                      custom_objects={"iou_coef":iou_coef}
+                                                     )
+    ##
     t0 = time.time()
     ##
-    make_predict()
+    make_predict(model)
     ##
     inference_time = round(time.time() - t0,2)
     return render_template('verif.html', inference_time=inference_time)
