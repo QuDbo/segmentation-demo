@@ -1,6 +1,7 @@
 import os
 import time
 import urllib.request
+import wget
 from flask import Flask, flash, request, redirect, render_template
 from werkzeug.utils import secure_filename
 from predmodel import *
@@ -49,7 +50,11 @@ def verif():
     # flash(f'Fichier trouvé : {isFile}')
     ##
     ### Loading the model
-    model = tf.keras.models.load_model("model/unet_vgg16_v3_256_2Aug/",
+    model_url = "https://github.com/QuDbo/segmentation-demo/releases/download/demo/variables.data-00000-of-00001?raw=true"
+    local_path = "model/unet_vgg16_v3_256_2Aug/variables/"
+    wget.download(model_url, local_path)
+    
+    model = tf.keras.models.load_model("./model/unet_vgg16_v3_256_2Aug/",
                                                       custom_objects={"iou_coef":iou_coef}
                                                      )
     ##
