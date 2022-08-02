@@ -1,7 +1,6 @@
 import tensorflow as tf
 import tensorflow.keras.preprocessing.image as imgtf
 import numpy as np
-from postModel_v7 import *
 
 def convert_mask_to_color(masks):
     '''
